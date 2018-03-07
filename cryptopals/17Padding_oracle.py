@@ -2,87 +2,88 @@
 import os
 import random
 from Crypto.Cipher import AES
-#key=os.urandom(16)
-key="sayoojsamuel4444" #remove this after completuin of code
+key=os.urandom(16)
+
+
+def xor(a,b):
+	return "".join(chr(ord(i) ^ ord(j)) for i,j in zip(a,b))
+def xor3(a,b,c):
+	return "".join(chr(ord(i) ^ ord(j) ^ ord(k)) for i,j,k in zip(a,b,c))
+
 def encrypt():
 	a=open("17.txt").readlines()
-	#pt=a[random.randint(0,len(a)-1)].rstrip('\n')
-	#pt=a[0].rstrip('\n')   # remove this line after test successa
-	pt="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
+
+
+	#pt=random.choice(a).rstrip("\n").decode("base64")
+	pt=a[9].rstrip("\n").decode("base64")
+	print pt
 	pad=16-len(pt)%16
 	pt+=pad * chr(pad)
-	#iv=os.urandom(16)
-	iv="sayoojsamuel4444"
+	iv=os.urandom(16)
+
 	obj=AES.new(key,AES.MODE_CBC,iv)
 	ct=obj.encrypt(pt)
 	return [ct,iv]
+
 def decrypt(ct,iv):
 	obj=AES.new(key,AES.MODE_CBC, iv)
 	pt=obj.decrypt(ct)
 	return pad_check(pt)
-
+ 
 def pad_check(string, block=16):
 	pad=string[len(string)-1]
+	if(pad=='\x00'):
+		return False
 	intpad=ord(pad)
 	try:
 		for i in range(intpad):
 			if(string[::-1][i]!=pad):
 				raise
 		string=string.rstrip(pad)
-		#print "The string after padding removal is :\n" + string
+		#print "the string after padding removal is :\n" + string
 		return True
-
 	except:
 		#print "Padding is wrong"
 		return False
 
 
-#second approach to attack
-def att_2():
-	a=encrypt();
-	n=len(a[0])/16
-	ctr=[]
-	ctr+=16* '\x00'
-	block=16
-	block-=1
-	pt=[]
-	ptorg=[]
-	pt+=16 * "\x00"
-	ct=[a[0][l*16:(l+1)*16] for l in range(len(a[0])/16)]
-	print ct
-	for i in range(256):
-		att="".join(ctr[:15])+chr(i)
-		att+=ct[n-1]
-		temp=decrypt(att,a[1])
-		if(temp):
-			pt[block]=chr(i)
-			ptorg= 1 ^ ord(ct[n-1][block]) ^ i
-			break
-	print chr(ptorg)
+def exploit():
+	#takes the list output
+	out=encrypt()
 
-if __name__=="__main__":
-	att_2()
+	ct=out[0]
+	iv=out[1]
+	
+	#to get the number of blocks (includes iv)
+	nblock=len(ct)/16 + 1
+	block_size=16
 
-	'''
-	a=encrypt();
-	n=len(a[0])/16
-	ctr=[]
-	rate=16
-	ctr+=16 * '\x00'
-	pt=[]
-	pt+=16 * '\x00'
-	for j in range(16):
-		rate-=1
-		for i in range(1,256):
-			#rate-=1
-			att="".join(ctr[:rate])+chr(i)+"".join(ctr[rate+1:])
-			print [att]
-			att=att+a[0][(n-1) * 16 : n * 16]
-			temp=decrypt(att,a[1])
-			#print "printing temp:",temp
-			if(temp):
-				pt[rate]=chr(i)
-				print "Check on ",i
-				break
-	print "The pt value is ",pt
-   	'''
+	#to break the ct into ct list
+	ctl=[iv]
+	ptl=[]
+	for i in range(nblock):
+		ctl+=[ct[i*block_size : (i+1)*block_size]] 
+	flag=""
+	for i in range(nblock-1,-1,-1):
+			
+		#to create 1 block attack
+		brute="\x00"*block_size
+		ptblock=""
+		for j in range(15,-1,-1):
+			pad = chr(16-j)
+			for k in range(256):
+				mod = xor3(ctl[i-1],"\x00"*j + pad *(16-j) ,brute[:j]+chr(k)+ptblock)
+				att = mod + ctl[i]
+				print " mod : ", len(brute[:j]+chr(k)+ptblock)
+				if(decrypt(att,iv)):
+					print chr(k)
+					ptblock=chr(k)+ptblock
+
+		
+		flag=ptblock+flag
+		print "-------"
+	print flag
+		
+if __name__=="__main__"	:
+	exploit()
