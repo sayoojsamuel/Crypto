@@ -1,0 +1,62 @@
+9 March 2017 @v4d3r
+
+Challenge: Nice Primes
+CTF: Tokyo Western 2016
+Points: 50
+Tags: RSA
+Description: Decrypt it.
+
+
+Just another 50 pointer RSA, surely easy enough to solve with basic maths.
+Analysing the given files, we have:
+	encrypted
+	encryption.py
+	key1
+	key2
+The primes p,q are generated such that p+2, q+2 are also primes
+'''python
+def getTwinPrime(N):
+    while True:
+        p = getPrime(N)
+        if isPrime(p+2):
+            return p
+'''
+
+This opens up a new relation between the two modulus n1 and n2 resutling in 
+	n2 = n1 + 2p + 2q + 4
+	p+q = (n2-n1-4)/2
+
+	$sumpq=(n2-n1-4)/2
+	
+Now with p+q and pq, we calculate p-q with 
+	(p-q)² = (p+2)²-4pq
+
+	$diffpq = gmpy2.iroot((sumpq**2-4*n1),2)[0]
+
+Wow, now do your magic with the sum and diff of primes. All we are looking for is the prime pair
+'''python
+	p=(sumpq+diffpq)/2
+	q=n1/p
+    	d1 = inverse(e, (p-1)*(q-1))
+    	d2 = inverse(e, (p+1)*(q+1))
+'''
+
+And thats is. Further decrypt the ciphertext by generating the keys 
+    $key1 = RSA.construct((n1, e, d1))
+    $key2 = RSA.construct((n2, e, d2))
+	$c = rsa1.decrypt(c, 0)[0]
+	$m = rsa2.encrypt(c, 0)[0]
+
+
+
+Or you can decrypt manually by
+'''python
+	m=pow(int(c),d2,n2)
+	m=pow(m,d1,n1)
+	m=hex(m)[2:-1].decode('hex')
+	print m
+'''
+
+And there goes the flag:
+>>TWCTF{3102628d7059fa267365f8c37a0e56cf7e0797ef}
+
