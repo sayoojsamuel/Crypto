@@ -48,4 +48,4 @@ for i in c:
 print flag
 '''
 
-##FLAG: MeePwnCTF{well_is_fact0rizati0n_0nly_w4y_to_s0lve_it?}
+# FLAG: MeePwnCTF{well_is_fact0rizati0n_0nly_w4y_to_s0lve_it?}
