@@ -19,8 +19,8 @@ c = [encrypt(mi, n, g, h) for mi in m]
 
 We are provided with `n`, `h`, `q` and we can easily factorise `n` using factordb to get `p` and `q`.
 Further the wierd thing is the description of `n = p*p*q`. We calculate `phi(n)` using Euler's Totient funtion:
-phi(n) = phi(p^2) * phi(q)
-phi(n) = p * (p-1) * (q-1)
+>phi(n) = phi(p^2) * phi(q)
+>phi(n) = p * (p-1) * (q-1)
 
 From the ecnryption function, we get to `c = g^m * h^r mod n`
 which implies `c = g^m * g^nr mod n`
@@ -31,9 +31,9 @@ which implies `c = g^m * g^nr mod n`
 Now, if we power both sides with `phi(n)`, we would get something like
 `c^phi(n) mod n = g^m*phi(n) * g^nr*phi(n) mod n`
 but unfortunately, that might turn to `1 = 1 * 1`. So we have to raise the power such that only the term containg the random `r` gets eliminated. One way to get over with it is to power with `(p-1)(q-1)`, resulting in  
-  *`c^(p-1)(q-1) mod n = g^m(p-1)(q-1) * g^p*p*q*r*(p-1)(q-1) mod n`
-  *`c^(p-1)(q-1) mod n = g^m(p-1)(q-1) * g^phi(n)*p*q*r mod n`
-  *`c^(p-1)(q-1) mod n = g^m(p-1)(q-1) mod n`
++ `c^(p-1)(q-1) mod n = g^m(p-1)(q-1) * g^p*p*q*r*(p-1)(q-1) mod n`
++ `c^(p-1)(q-1) mod n = g^m(p-1)(q-1) * g^phi(n)*p*q*r mod n`
++ `c^(p-1)(q-1) mod n = g^m(p-1)(q-1) mod n`
 
 
 We now have a simplified equation with just m unknown. So work on with bruteforce to get back the message! lol and that just gave away the flag :p
