@@ -49,7 +49,7 @@ And thats is. Further decrypt the ciphertext by generating the keys
 
 
 
-Or you can decrypt manually by
+Or you can decrypt it manually by
 '''python
 	m=pow(int(c),d2,n2)
 	m=pow(m,d1,n1)

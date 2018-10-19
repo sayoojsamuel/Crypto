@@ -1,3 +1,3 @@
-# Crypto
-for crypto tasks and files
-Enjoy 
+# Cryptography
+
+for crypto tasks and files.
