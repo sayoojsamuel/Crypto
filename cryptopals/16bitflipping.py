@@ -35,7 +35,7 @@ block[6]= chr(ord(block[6]) ^ ord('?') ^ ord('='))
 block[11]= chr(ord(block[11]) ^ ord('?') ^ ord(';'))
 cipher_list[1]=''.join(block)
 ct=''.join(cipher_list)
-
+#todecrypt
 decrypt(ct)
 
 
