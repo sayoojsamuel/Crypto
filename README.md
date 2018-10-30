@@ -1,2 +1,2 @@
 # Crypto
-for crypto tasks and files.
+for crypto tasks and files
