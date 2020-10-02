@@ -1,6 +1,7 @@
 #Extended Eucledian Algorithm
 # with input from https://github.com/lapets/egcd, Lisenced under MIT
 
+
 def egcd(a, b):
     '''
     Given two integers (a, b), returns (gcd(a, b), m, n) such that
